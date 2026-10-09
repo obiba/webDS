@@ -98,6 +98,12 @@ export default defineConfig((ctx) => {
       // vueDevtools: true,
       // https: true,
       open: false, // opens browser window automatically
+      // cross-origin isolation: lets webR use SharedArrayBuffer (interrupt, readline)
+      // production web server must send the same headers
+      headers: {
+        'Cross-Origin-Opener-Policy': 'same-origin',
+        'Cross-Origin-Embedder-Policy': 'require-corp',
+      },
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework
@@ -115,7 +121,7 @@ export default defineConfig((ctx) => {
       // directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: ['Dialog', 'Notify'],
     },
 
     // animations: 'all', // --- includes all animations
