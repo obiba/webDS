@@ -1,6 +1,9 @@
 <!doctype html>
 <html>
   <head>
+    <!-- static hosts (GitHub Pages) cannot send COOP/COEP headers: a service worker adds them,
+         so webR can use SharedArrayBuffer (interrupt, readline). No-op when already isolated. -->
+    <script src="coi-serviceworker.js"></script>
     <title><%= productName %></title>
 
     <meta charset="utf-8" />

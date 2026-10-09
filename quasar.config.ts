@@ -48,7 +48,8 @@ export default defineConfig((ctx) => {
       vueRouterMode: 'hash', // available values: 'hash', 'history'
       // vueRouterBase,
 
-      // publicPath: '/',
+      // GitHub Pages serves the app under /<repo>/, set by the deploy workflow
+      publicPath: process.env.PUBLIC_PATH ?? '/',
       // define: {},
       // defineEnv: {}
       // ignorePublicFolder: true,
