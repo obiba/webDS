@@ -11,6 +11,17 @@ export interface ConsoleLine {
 // ponytail: oldest lines dropped beyond this, virtual scroll if full scrollback matters
 const MAX_LINES = 5000;
 let lineId = 0;
+// ANSI escape sequences (colors, cursor show/hide...)
+// ponytail: stripped, render colors if needed
+// eslint-disable-next-line no-control-regex -- matching ESC is the point
+const ANSI = /\x1b\[[0-9;?]*[A-Za-z]/g;
+
+/** Render one output line as a terminal would: carriage returns overwrite from line start. */
+function toLine(text: string) {
+  let line = '';
+  for (const part of text.replace(ANSI, '').split('\r')) line = part + line.slice(part.length);
+  return line;
+}
 
 export const useWebRStore = defineStore('webr', () => {
   // not reactive: the WebR instance must not be wrapped in a Vue proxy
@@ -32,7 +43,8 @@ export const useWebRStore = defineStore('webr', () => {
     try {
       webR = new WebR();
       await webR.init();
-      await webR.evalRVoid('options(device = webr::canvas)');
+      // shim_install: install.packages() fetches wasm binaries instead of building sources
+      await webR.evalRVoid('webr::shim_install(); options(device = webr::canvas)');
       status.value = 'ready';
       void readLoop(webR);
     } catch (e) {
@@ -47,7 +59,7 @@ export const useWebRStore = defineStore('webr', () => {
       switch (msg.type) {
         case 'stdout':
         case 'stderr':
-          append({ type: msg.type, text: msg.data as string });
+          append({ type: msg.type, text: toLine(msg.data as string) });
           break;
         case 'prompt':
           prompt.value = msg.data as string;
