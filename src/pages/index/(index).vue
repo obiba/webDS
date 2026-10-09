@@ -12,23 +12,45 @@
         </q-splitter>
       </template>
       <template #after>
-        <FileBrowser class="fit" @open="editor?.open($event)" />
+        <div class="fit column no-wrap">
+          <q-tabs v-model="tab" dense no-caps align="left">
+            <q-tab name="files" label="Files" />
+            <q-tab name="plots" label="Plots" />
+          </q-tabs>
+          <q-separator />
+          <q-tab-panels v-model="tab" class="col" keep-alive>
+            <q-tab-panel name="files" class="q-pa-none">
+              <FileBrowser class="fit" @open="editor?.open($event)" />
+            </q-tab-panel>
+            <q-tab-panel name="plots" class="q-pa-none">
+              <PlotViewer class="fit" />
+            </q-tab-panel>
+          </q-tab-panels>
+        </div>
       </template>
     </q-splitter>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef } from 'vue';
+import { onMounted, ref, useTemplateRef, watch } from 'vue';
 import ConsolePanel from '@/components/ConsolePanel.vue';
 import EditorPanel from '@/components/EditorPanel.vue';
 import FileBrowser from '@/components/FileBrowser.vue';
+import PlotViewer from '@/components/PlotViewer.vue';
 import { useWebRStore } from '@/stores/webr';
 
 const webr = useWebRStore();
 const editor = useTemplateRef('editor');
 const split = ref(70);
 const editorSplit = ref(55);
+const tab = ref('files');
+
+// bring plots forward when R starts a new one
+watch(
+  () => webr.plots.length,
+  () => (tab.value = 'plots'),
+);
 
 onMounted(() => void webr.init());
 

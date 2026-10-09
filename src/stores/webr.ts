@@ -1,6 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { ref } from 'vue';
-import { WebR } from 'webr';
+import { markRaw, ref } from 'vue';
+import { WebR, type CanvasMessage } from 'webr';
 
 export interface ConsoleLine {
   id: number;
@@ -34,6 +34,8 @@ export const useWebRStore = defineStore('webr', () => {
   const prompt = ref('> ');
   const busy = ref(false);
   const history = ref<string[]>([]);
+  // one canvas per plot page, drawn as R sends images
+  const plots = ref<HTMLCanvasElement[]>([]);
   // lines waiting for R to ask for input, sent one per prompt so each echo gets the right prompt
   const pending: string[] = [];
 
@@ -66,14 +68,36 @@ export const useWebRStore = defineStore('webr', () => {
           busy.value = false;
           sendNext();
           break;
+        case 'canvas':
+          draw((msg as CanvasMessage).data);
+          break;
         case 'closed':
           status.value = 'idle';
           return;
         default:
-          // canvas, pager, view...: handled in later phases
+          // pager, view...: handled in later phases
           console.debug('webR message ignored', msg);
       }
     }
+  }
+
+  // ponytail: single device, message ids ignored; track them if dev.new() matters
+  function draw(data: CanvasMessage['data']) {
+    if (data.event === 'canvasNewPage') {
+      plots.value.push(markRaw(document.createElement('canvas')));
+      return;
+    }
+    let canvas = plots.value[plots.value.length - 1];
+    if (!canvas) {
+      canvas = markRaw(document.createElement('canvas'));
+      plots.value.push(canvas);
+    }
+    if (canvas.width !== data.image.width || canvas.height !== data.image.height) {
+      canvas.width = data.image.width;
+      canvas.height = data.image.height;
+    }
+    canvas.getContext('2d')?.drawImage(data.image, 0, 0);
+    data.image.close();
   }
 
   function append(line: Omit<ConsoleLine, 'id'>) {
@@ -119,6 +143,7 @@ export const useWebRStore = defineStore('webr', () => {
     prompt,
     busy,
     history,
+    plots,
     init,
     write,
     interrupt,
