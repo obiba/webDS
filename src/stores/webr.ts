@@ -47,6 +47,11 @@ export const useWebRStore = defineStore('webr', () => {
       await webR.init();
       // shim_install: install.packages() fetches wasm binaries instead of building sources
       await webR.evalRVoid('webr::shim_install(); options(device = webr::canvas)');
+      // curl's 10s connect timeout is too short through the webR websocket relay;
+      // httr (used by opalr/DSOpal) is set up whenever it gets loaded
+      await webR.evalRVoid(
+        'setHook(packageEvent("httr", "onLoad"), function(...) httr::set_config(httr::config(connecttimeout = 60)))',
+      );
       status.value = 'ready';
       void readLoop(webR);
     } catch (e) {
