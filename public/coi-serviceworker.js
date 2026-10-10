@@ -48,7 +48,10 @@ if (typeof window === 'undefined') {
                     }
                     newHeaders.set("Cross-Origin-Opener-Policy", "same-origin");
 
-                    return new Response(response.body, {
+                    // null-body statuses (e.g. 204 from Opal command results): Chrome and Safari
+                    // give an empty stream, which the Response constructor rejects
+                    const nullBody = [101, 103, 204, 205, 304].includes(response.status);
+                    return new Response(nullBody ? null : response.body, {
                         status: response.status,
                         statusText: response.statusText,
                         headers: newHeaders,
