@@ -3,6 +3,7 @@ import { markRaw, ref } from 'vue';
 import { WebR, type CanvasMessage, type PagerMessage } from 'webr';
 import initR from './init.R?raw';
 import exampleR from './datashield_analysis.R?raw';
+import exampleDSLiteR from './datashield_analysis_dslite.R?raw';
 
 /** Example script written in the home folder at startup. */
 export const EXAMPLE_FILE = '/home/web_user/datashield_analysis.R';
@@ -63,6 +64,7 @@ export const useWebRStore = defineStore('webr', () => {
       await webR.init();
       await webR.evalRVoid(initR);
       await webR.FS.writeFile(EXAMPLE_FILE, new TextEncoder().encode(exampleR));
+      await webR.FS.writeFile('/home/web_user/datashield_analysis_dslite.R', new TextEncoder().encode(exampleDSLiteR));
       status.value = 'ready';
       void readLoop(webR);
     } catch (e) {
