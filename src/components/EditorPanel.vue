@@ -19,20 +19,26 @@
       <template v-if="current">
         <q-btn flat dense size="sm" icon="save" title="Save (Ctrl+S)" @click="save()" />
         <q-btn
-          flat
+          outline
           dense
+          no-caps
           size="sm"
           icon="play_arrow"
+          label="Run line"
           title="Run line or selection (Ctrl+Enter)"
           @click="run()"
+          class="q-ml-sm q-pr-sm"
         />
         <q-btn
-          flat
+          outline
           dense
+          no-caps
           size="sm"
           icon="double_arrow"
+          label="Source"
           title="Source file (Ctrl+Shift+S)"
           @click="source()"
+          class="q-mx-sm q-pr-sm"
         />
       </template>
     </div>

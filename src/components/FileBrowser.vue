@@ -10,15 +10,26 @@
         title="New folder"
         @click="create(true)"
       />
-      <q-btn flat dense size="sm" icon="upload" title="Upload" @click="uploader?.click()" />
       <q-btn
-        flat
+        outline
         dense
+        no-caps
+        size="sm"
+        icon="upload"
+        label="Upload"
+        @click="uploader?.click()"
+        class="q-mx-sm q-pr-sm"
+      />
+      <q-btn
+        outline
+        dense
+        no-caps
         size="sm"
         icon="download"
-        title="Download"
+        label="Download"
         :disable="!selectedNode || selectedNode.isFolder"
         @click="download"
+        class="q-mr-xs q-pr-sm"
       />
       <q-btn
         flat
