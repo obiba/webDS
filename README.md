@@ -1,4 +1,4 @@
-# Web DataSHIELD (webds)
+# Web R/DataSHIELD (webds)
 
 ## Install the dependencies
 

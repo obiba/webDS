@@ -1,8 +1,8 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header elevated>
+    <q-header elevated class="bg-dark text-white">
       <q-toolbar>
-        <q-toolbar-title>Web DataSHIELD</q-toolbar-title>
+        <q-toolbar-title>Web R/DataSHIELD</q-toolbar-title>
       </q-toolbar>
     </q-header>
 
