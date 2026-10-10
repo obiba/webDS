@@ -2,6 +2,7 @@
   <q-layout view="hHh lpR fFf">
     <q-header elevated class="bg-dark text-white">
       <q-toolbar>
+        <q-btn flat dense round icon="menu" aria-label="Menu" @click="drawer = !drawer" />
         <q-toolbar-title>Web R/DataSHIELD</q-toolbar-title>
         <q-btn
           flat
@@ -25,6 +26,21 @@
       </q-banner>
     </q-header>
 
+    <q-drawer v-model="drawer" show-if-above bordered>
+      <q-list>
+        <q-item-label header>Links</q-item-label>
+        <q-item v-for="link in links" :key="link.link" clickable tag="a" target="_blank" :href="link.link">
+          <q-item-section avatar>
+            <q-icon :name="link.icon" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ link.title }}</q-item-label>
+            <q-item-label caption>{{ link.caption }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-drawer>
+
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -40,6 +56,28 @@ const $q = useQuasar();
 const webr = useWebRStore();
 // shown at each visit: it is a warning
 const banner = ref(true);
+const drawer = ref(true);
+
+const links = [
+  {
+    title: 'DataSHIELD',
+    caption: 'Documentation and tutorials',
+    icon: 'school',
+    link: 'https://wiki.datashield.org',
+  },
+  {
+    title: 'webR',
+    caption: 'R in the browser',
+    icon: 'menu_book',
+    link: 'https://docs.r-wasm.org/webr/latest/',
+  },
+  {
+    title: 'Source code',
+    caption: 'github.com/obiba/webDS',
+    icon: 'code',
+    link: 'https://github.com/obiba/webDS',
+  },
+];
 
 function install() {
   $q.dialog({
