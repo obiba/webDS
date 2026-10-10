@@ -1,6 +1,12 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { markRaw, ref } from 'vue';
-import { WebR, type CanvasMessage } from 'webr';
+import { WebR, type CanvasMessage, type PagerMessage } from 'webr';
+import initR from './init.R?raw';
+
+export interface HelpPage {
+  title: string;
+  html: string;
+}
 
 export interface ConsoleLine {
   id: number;
@@ -17,6 +23,10 @@ let lineId = 0;
 const ANSI = /\x1b\[[0-9;?]*[A-Za-z]/g;
 
 /** Render one output line as a terminal would: carriage returns overwrite from line start. */
+function escapeHtml(text: string) {
+  return text.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]!);
+}
+
 function toLine(text: string) {
   let line = '';
   for (const part of text.replace(ANSI, '').split('\r')) line = part + line.slice(part.length);
@@ -36,6 +46,8 @@ export const useWebRStore = defineStore('webr', () => {
   const history = ref<string[]>([]);
   // one canvas per plot page, drawn as R sends images
   const plots = ref<HTMLCanvasElement[]>([]);
+  // last page sent by the R pager (help topics, package index, search results)
+  const helpPage = ref<HelpPage>();
   // lines waiting for R to ask for input, sent one per prompt so each echo gets the right prompt
   const pending: string[] = [];
 
@@ -45,13 +57,7 @@ export const useWebRStore = defineStore('webr', () => {
     try {
       webR = new WebR();
       await webR.init();
-      // shim_install: install.packages() fetches wasm binaries instead of building sources
-      await webR.evalRVoid('webr::shim_install(); options(device = webr::canvas)');
-      // curl's 10s connect timeout is too short through the webR websocket relay;
-      // httr (used by opalr/DSOpal) is set up whenever it gets loaded
-      await webR.evalRVoid(
-        'setHook(packageEvent("httr", "onLoad"), function(...) httr::set_config(httr::config(connecttimeout = 60)))',
-      );
+      await webR.evalRVoid(initR);
       status.value = 'ready';
       void readLoop(webR);
     } catch (e) {
@@ -76,14 +82,55 @@ export const useWebRStore = defineStore('webr', () => {
         case 'canvas':
           draw((msg as CanvasMessage).data);
           break;
+        case 'pager':
+          void page((msg as PagerMessage).data);
+          break;
         case 'closed':
           status.value = 'idle';
           return;
         default:
-          // pager, view...: handled in later phases
+          // view, browse...: not handled
           console.debug('webR message ignored', msg);
       }
     }
+  }
+
+  async function page(data: PagerMessage['data']) {
+    try {
+      const fs = webR!.FS;
+      const text = new TextDecoder().decode(await fs.readFile(data.path));
+      if (data.deleteFile) await fs.unlink(data.path);
+      const html = data.path.endsWith('.html')
+        ? text
+            // stylesheets/scripts point to R's doc server, which does not exist: inline R.css instead
+            .replace(/<script[\s\S]*?<\/script>|<link[^>]*>/g, '')
+            .replace('</head>', `<style>${await rCss()}</style></head>`)
+        : `<pre>${escapeHtml(text)}</pre>`;
+      helpPage.value = { title: data.title, html };
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  let css: string | undefined;
+  async function rCss() {
+    css ??= new TextDecoder().decode(await webR!.FS.readFile('/usr/lib/R/doc/html/R.css'));
+    return css;
+  }
+
+  /** Show help of a topic (or of a package with no topic) in the help viewer. */
+  function help(topic?: string, pkg?: string) {
+    const t = JSON.stringify(topic);
+    const p = JSON.stringify(pkg);
+    const code =
+      topic === undefined
+        ? `print(help(package = ${p}))`
+        : pkg === undefined
+          ? `print(help(${t}))`
+          : // links name the page's package even for topics found elsewhere: fall back to all packages
+            `local({ h <- help(${t}, package = ${p}); print(if (length(h)) h else help(${t})) })`;
+    // not captured: "No documentation for ..." goes to the console
+    void webR?.evalRVoid(code, { captureStreams: false });
   }
 
   // ponytail: single device, message ids ignored; track them if dev.new() matters
@@ -149,6 +196,8 @@ export const useWebRStore = defineStore('webr', () => {
     busy,
     history,
     plots,
+    helpPage,
+    help,
     init,
     write,
     interrupt,

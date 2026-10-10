@@ -16,6 +16,7 @@
           <q-tabs v-model="tab" dense no-caps align="left">
             <q-tab name="files" label="Files" />
             <q-tab name="plots" label="Plots" />
+            <q-tab name="help" label="Help" />
           </q-tabs>
           <q-separator />
           <q-tab-panels v-model="tab" class="col" keep-alive>
@@ -24,6 +25,9 @@
             </q-tab-panel>
             <q-tab-panel name="plots" class="q-pa-none">
               <PlotViewer class="fit" />
+            </q-tab-panel>
+            <q-tab-panel name="help" class="q-pa-none">
+              <HelpViewer class="fit" />
             </q-tab-panel>
           </q-tab-panels>
         </div>
@@ -37,6 +41,7 @@ import { onMounted, ref, useTemplateRef, watch } from 'vue';
 import ConsolePanel from '@/components/ConsolePanel.vue';
 import EditorPanel from '@/components/EditorPanel.vue';
 import FileBrowser from '@/components/FileBrowser.vue';
+import HelpViewer from '@/components/HelpViewer.vue';
 import PlotViewer from '@/components/PlotViewer.vue';
 import { useWebRStore } from '@/stores/webr';
 
@@ -50,6 +55,10 @@ const tab = ref('files');
 watch(
   () => webr.plots.length,
   () => (tab.value = 'plots'),
+);
+watch(
+  () => webr.helpPage,
+  () => (tab.value = 'help'),
 );
 
 onMounted(() => void webr.init());
