@@ -13,6 +13,15 @@
           :disable="webr.status !== 'ready'"
           @click="install"
         />
+        <q-btn
+          v-if="$q.screen.lt.md"
+          flat
+          dense
+          round
+          icon="menu"
+          aria-label="Files, plots and help"
+          @click="sideDrawer = !sideDrawer"
+        />
       </q-toolbar>
       <!-- in the header: the page height accounts for it -->
       <q-banner v-if="banner" dense inline-actions class="bg-warning text-dark">
@@ -56,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { provide, ref } from 'vue';
 import { useQuasar } from 'quasar';
 import { useWebRStore } from '@/stores/webr';
 import WelcomeDialog from '@/components/WelcomeDialog.vue';
@@ -66,6 +75,9 @@ const webr = useWebRStore();
 // shown at each visit: it is a warning
 const banner = ref(true);
 const drawer = ref(true);
+// right drawer of the index page, on small screens
+const sideDrawer = ref(false);
+provide('sideDrawer', sideDrawer);
 
 const links = [
   {
