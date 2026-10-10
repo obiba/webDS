@@ -53,7 +53,7 @@ export const useWebRStore = defineStore('webr', () => {
   // last page sent by the R pager (help topics, package index, search results)
   const helpPage = ref<HelpPage>();
   // lines waiting for R to ask for input, sent one per prompt so each echo gets the right prompt
-  const pending: string[] = [];
+  const pending = ref<string[]>([]);
 
   async function init() {
     if (status.value !== 'idle') return;
@@ -164,12 +164,12 @@ export const useWebRStore = defineStore('webr', () => {
 
   /** Queue code for R, one or more lines. */
   function write(code: string) {
-    pending.push(...code.split(/\r?\n/));
+    pending.value.push(...code.split(/\r?\n/));
     if (!busy.value) sendNext();
   }
 
   function sendNext() {
-    const code = pending.shift();
+    const code = pending.value.shift();
     if (!webR || code === undefined) return;
     append({ type: 'input', text: prompt.value + code });
     if (code.trim() && history.value[history.value.length - 1] !== code) history.value.push(code);
@@ -178,7 +178,7 @@ export const useWebRStore = defineStore('webr', () => {
   }
 
   function interrupt() {
-    pending.length = 0;
+    pending.value = [];
     webR?.interrupt();
   }
 
@@ -200,6 +200,7 @@ export const useWebRStore = defineStore('webr', () => {
     prompt,
     busy,
     history,
+    pending,
     plots,
     helpPage,
     help,

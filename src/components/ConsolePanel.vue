@@ -23,8 +23,16 @@
         :class="`console-${line.type}`"
         v-text="line.text"
       />
+      <!-- commands queued while R is busy -->
+      <div
+        v-for="(line, i) in webr.pending"
+        :key="`pending-${i}`"
+        class="console-pending"
+        v-text="'  ' + line"
+      />
       <div v-if="webr.status === 'ready'" class="row no-wrap items-center">
-        <span class="console-input">{{ webr.prompt }}</span>
+        <q-spinner v-if="webr.busy" size="1em" color="primary" class="console-spinner" />
+        <span v-else class="console-input">{{ webr.prompt }}</span>
         <input
           ref="input"
           v-model="code"
@@ -70,7 +78,7 @@ watch(
 );
 
 watch(
-  () => webr.lines.length,
+  () => webr.lines.length + webr.pending.length,
   async () => {
     await nextTick();
     output.value?.scrollTo({ top: output.value.scrollHeight });
@@ -135,6 +143,13 @@ function interrupt(e: KeyboardEvent) {
 .console-input {
   color: #1565c0;
   white-space: pre;
+}
+.console-pending {
+  color: #9e9e9e;
+}
+/* same width as the "> " prompt */
+.console-spinner {
+  margin-right: 1ch;
 }
 .console-stderr {
   color: #c62828;
