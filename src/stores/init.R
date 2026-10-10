@@ -2,6 +2,11 @@
 
 # install.packages() fetches wasm binaries instead of building sources
 webr::shim_install()
+# CRAN packages missing from the webR repo (e.g. rootSolve) have wasm builds on r-universe
+local({
+  repos <- c("https://repo.r-wasm.org/", "https://cran.r-universe.dev")
+  options(repos = repos, webr_pkg_repos = repos)
+})
 options(device = webr::canvas)
 
 # curl's 10s connect timeout is too short through the webR websocket relay;
