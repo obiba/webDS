@@ -1,15 +1,40 @@
 <template>
   <q-page :style-fn="fullHeight">
-    <q-splitter v-model="split" class="fit">
+    <q-splitter
+      v-model="split"
+      class="fit"
+      separator-class="bg-primary"
+      separator-style="width: 3px"
+    >
       <template #before>
-        <q-splitter v-model="editorSplit" horizontal class="fit">
+        <q-splitter
+          v-model="editorSplit"
+          horizontal
+          class="fit"
+          separator-class="bg-primary"
+          separator-style="height: 3px"
+        >
           <template #before>
             <EditorPanel ref="editor" class="fit" />
           </template>
+          <template #separator>
+            <q-avatar rounded color="primary" text-color="white" size="20px" icon="drag_handle" style="width: 32px; height: 14px" />
+          </template>
+
           <template #after>
             <ConsolePanel class="fit" />
           </template>
         </q-splitter>
+      </template>
+      <template #separator>
+        <q-avatar
+          rounded
+          color="primary"
+          text-color="white"
+          size="20px"
+          icon="drag_handle"
+          style="width: 32px; height: 14px; transform: translate(-50%, -50%) rotate(90deg)"
+        />
       </template>
       <template #after>
         <div class="fit column no-wrap">
