@@ -15,6 +15,12 @@ export interface HelpPage {
   html: string;
 }
 
+export interface Package {
+  name: string;
+  version: string;
+  loaded: boolean;
+}
+
 export interface ConsoleLine {
   id: number;
   type: 'stdout' | 'stderr' | 'input';
@@ -66,9 +72,18 @@ export const useWebRStore = defineStore('webr', () => {
       await webR.init();
       await webR.evalRVoid(initR);
       await webR.FS.writeFile(EXAMPLE_FILE, new TextEncoder().encode(exampleR));
-      await webR.FS.writeFile('/home/web_user/datashield_analysis_dslite.R', new TextEncoder().encode(exampleDSLiteR));
-      await webR.FS.writeFile('/home/web_user/datashield_tidyverse.R', new TextEncoder().encode(exampleTidyverseR));
-      await webR.FS.writeFile('/home/web_user/datashield_tidyverse_dslite.R', new TextEncoder().encode(exampleTidyverseDSLiteR));
+      await webR.FS.writeFile(
+        '/home/web_user/datashield_analysis_dslite.R',
+        new TextEncoder().encode(exampleDSLiteR),
+      );
+      await webR.FS.writeFile(
+        '/home/web_user/datashield_tidyverse.R',
+        new TextEncoder().encode(exampleTidyverseR),
+      );
+      await webR.FS.writeFile(
+        '/home/web_user/datashield_tidyverse_dslite.R',
+        new TextEncoder().encode(exampleTidyverseDSLiteR),
+      );
       status.value = 'ready';
       void readLoop(webR);
     } catch (e) {
@@ -133,15 +148,70 @@ export const useWebRStore = defineStore('webr', () => {
   function help(topic?: string, pkg?: string) {
     const t = JSON.stringify(topic);
     const p = JSON.stringify(pkg);
+    if (topic === undefined) {
+      void packageIndex(pkg!);
+      return;
+    }
     const code =
-      topic === undefined
-        ? `print(help(package = ${p}))`
-        : pkg === undefined
-          ? `print(help(${t}))`
-          : // links name the page's package even for topics found elsewhere: fall back to all packages
-            `local({ h <- help(${t}, package = ${p}); print(if (length(h)) h else help(${t})) })`;
+      pkg === undefined
+        ? `print(help(${t}))`
+        : // links name the page's package even for topics found elsewhere: fall back to all packages
+          `local({ h <- help(${t}, package = ${p}); print(if (length(h)) h else help(${t})) })`;
     // not captured: "No documentation for ..." goes to the console
     void webR?.evalRVoid(code, { captureStreams: false });
+  }
+
+  /**
+   * Package index with linked topics: R's own index is plain text when there is no help server.
+   * Links use the dynamic help form that the help viewer follows.
+   */
+  async function packageIndex(pkg: string) {
+    try {
+      const [title = '', version = '', description = '', ...topics] = await webR!.evalRRaw(
+        `local({ p <- ${JSON.stringify(pkg)}
+          d <- packageDescription(p)
+          f <- system.file("Meta", "Rd.rds", package = p)
+          r <- if (nzchar(f)) readRDS(f) else data.frame(Name = character(), Title = character())
+          r <- r[order(tolower(r$Name)), ]
+          c(toString(d$Title), toString(d$Version), toString(d$Description),
+            paste(r$Name, gsub("[[:space:]]+", " ", r$Title), sep = "\\t")) })`,
+        'string[]',
+      );
+      const rows = topics
+        .map((row) => {
+          const [name = '', desc = ''] = row.split('\t');
+          const href = `../../${encodeURIComponent(pkg)}/help/${encodeURIComponent(name)}`;
+          return `<tr><td><a href="${href}">${escapeHtml(name)}</a></td><td>${escapeHtml(desc)}</td></tr>`;
+        })
+        .join('');
+      helpPage.value = {
+        title: pkg,
+        html: `<html><head><style>${await rCss()}</style></head><body><div class="container">
+          <h2>${escapeHtml(title)}</h2>
+          <p>Package <span class="pkg">${escapeHtml(pkg)}</span> version ${escapeHtml(version)}</p>
+          <p>${escapeHtml(description)}</p>
+          <h3>Help pages</h3><table>${rows}</table></div></body></html>`,
+      };
+    } catch (e) {
+      // not installed...: R's message to the console
+      append({ type: 'stderr', text: e instanceof Error ? e.message : String(e) });
+    }
+  }
+
+  /** Installed packages, with their attached state. */
+  async function packages(): Promise<Package[]> {
+    if (!webR) return [];
+    const rows = await webR.evalRRaw(
+      `local({ p <- installed.packages()[, c("Package", "Version"), drop = FALSE]
+        unique(paste(p[, 1], p[, 2], p[, 1] %in% .packages(), sep = "\\t")) })`,
+      'string[]',
+    );
+    return rows
+      .map((row) => {
+        const [name = '', version = '', loaded] = row.split('\t');
+        return { name, version, loaded: loaded === 'TRUE' };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   // ponytail: single device, message ids ignored; track them if dev.new() matters
@@ -210,6 +280,7 @@ export const useWebRStore = defineStore('webr', () => {
     plots,
     helpPage,
     help,
+    packages,
     init,
     write,
     interrupt,

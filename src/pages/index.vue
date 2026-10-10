@@ -5,15 +5,6 @@
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="drawer = !drawer" />
         <q-toolbar-title>Web R/DataSHIELD</q-toolbar-title>
         <q-btn
-          flat
-          dense
-          no-caps
-          icon="extension"
-          label="Install packages"
-          :disable="webr.status !== 'ready'"
-          @click="install"
-        />
-        <q-btn
           v-if="$q.screen.lt.md"
           flat
           dense
@@ -67,11 +58,9 @@
 <script setup lang="ts">
 import { provide, ref } from 'vue';
 import { useQuasar } from 'quasar';
-import { useWebRStore } from '@/stores/webr';
 import WelcomeDialog from '@/components/WelcomeDialog.vue';
 
 const $q = useQuasar();
-const webr = useWebRStore();
 // shown at each visit: it is a warning
 const banner = ref(true);
 const drawer = ref(true);
@@ -123,18 +112,4 @@ const links = [
     link: 'https://github.com/obiba/webDS',
   },
 ];
-
-function install() {
-  $q.dialog({
-    title: 'Install packages',
-    message: 'Package names, separated by spaces or commas (e.g. DSOpal dsBaseClient)',
-    prompt: { model: '', type: 'text' },
-    cancel: true,
-  }).onOk((input: string) => {
-    // names go into R code: keep valid package names only
-    const names = input.split(/[\s,]+/).filter((n) => /^[A-Za-z][A-Za-z0-9.]*$/.test(n));
-    // through the console: progress and errors show there
-    if (names.length) webr.write(`install.packages(c(${names.map((n) => `"${n}"`).join(', ')}))`);
-  });
-}
 </script>

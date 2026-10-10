@@ -52,6 +52,7 @@
             <q-tabs v-model="tab" dense no-caps align="left">
               <q-tab name="files" label="Files" />
               <q-tab name="plots" label="Plots" />
+              <q-tab name="packages" label="Packages" />
               <q-tab name="help" label="Help" />
             </q-tabs>
             <q-separator />
@@ -61,6 +62,9 @@
               </q-tab-panel>
               <q-tab-panel name="plots" class="q-pa-none">
                 <PlotViewer class="fit" />
+              </q-tab-panel>
+              <q-tab-panel name="packages" class="q-pa-none">
+                <PackageList class="fit" />
               </q-tab-panel>
               <q-tab-panel name="help" class="q-pa-none">
                 <HelpViewer class="fit" />
@@ -83,6 +87,7 @@ import ConsolePanel from '@/components/ConsolePanel.vue';
 import EditorPanel from '@/components/EditorPanel.vue';
 import FileBrowser from '@/components/FileBrowser.vue';
 import HelpViewer from '@/components/HelpViewer.vue';
+import PackageList from '@/components/PackageList.vue';
 import PlotViewer from '@/components/PlotViewer.vue';
 import { EXAMPLE_FILE, useWebRStore } from '@/stores/webr';
 
