@@ -13,6 +13,16 @@
           @click="install"
         />
       </q-toolbar>
+      <!-- in the header: the page height accounts for it -->
+      <q-banner v-if="banner" dense inline-actions class="bg-warning text-dark">
+        <template #avatar><q-icon name="warning" /></template>
+        This is a DataSHIELD playground: R runs in your browser (WebAssembly, with webR). Execution,
+        package installation and requests to DataSHIELD servers are much slower than in a normal R
+        runtime.
+        <template #action>
+          <q-btn flat dense no-caps label="Dismiss" @click="banner = false" />
+        </template>
+      </q-banner>
     </q-header>
 
     <q-page-container>
@@ -22,11 +32,14 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useQuasar } from 'quasar';
 import { useWebRStore } from '@/stores/webr';
 
 const $q = useQuasar();
 const webr = useWebRStore();
+// shown at each visit: it is a warning
+const banner = ref(true);
 
 function install() {
   $q.dialog({
