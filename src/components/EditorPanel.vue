@@ -58,7 +58,7 @@ import {
 import { useQuasar } from 'quasar';
 import ace, { type Ace } from 'ace-builds';
 import 'ace-builds/src-noconflict/mode-r';
-import 'ace-builds/src-noconflict/theme-chrome';
+import 'ace-builds/src-noconflict/theme-monokai';
 import { useWebRStore } from '@/stores/webr';
 
 interface Tab {
@@ -80,7 +80,7 @@ let editor: Ace.Editor | undefined;
 
 onMounted(() => {
   editor = ace.edit(container.value, {
-    theme: 'ace/theme/chrome',
+    theme: 'ace/theme/monokai',
     showPrintMargin: false,
     fontSize: 14,
   });
