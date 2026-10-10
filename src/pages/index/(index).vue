@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, watch } from 'vue';
+import { onMounted, ref, type Ref, useTemplateRef, watch } from 'vue';
 import ConsolePanel from '@/components/ConsolePanel.vue';
 import EditorPanel from '@/components/EditorPanel.vue';
 import FileBrowser from '@/components/FileBrowser.vue';
@@ -47,9 +47,9 @@ import { useWebRStore } from '@/stores/webr';
 
 const webr = useWebRStore();
 const editor = useTemplateRef('editor');
-const split = ref(70);
-const editorSplit = ref(55);
-const tab = ref('files');
+const split = stored('webds.split', 70);
+const editorSplit = stored('webds.editorSplit', 55);
+const tab = stored('webds.tab', 'files');
 
 // bring plots forward when R starts a new one
 watch(
@@ -62,6 +62,26 @@ watch(
 );
 
 onMounted(() => void webr.init());
+
+/** Ref remembered in this browser; storage may be unavailable (private mode...). */
+function stored<T>(key: string, initial: T): Ref<T> {
+  let value = initial;
+  try {
+    const saved = localStorage.getItem(key);
+    if (saved !== null) value = JSON.parse(saved) as T;
+  } catch {
+    // keep initial
+  }
+  const r = ref(value) as Ref<T>;
+  watch(r, (v) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(v));
+    } catch {
+      // not remembered
+    }
+  });
+  return r;
+}
 
 function fullHeight(offset: number) {
   return { height: `calc(100vh - ${offset}px)` };
