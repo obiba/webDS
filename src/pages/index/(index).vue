@@ -18,7 +18,14 @@
             <EditorPanel ref="editor" class="fit" />
           </template>
           <template #separator>
-            <q-avatar rounded color="primary" text-color="white" size="20px" icon="drag_handle" style="width: 32px; height: 14px" />
+            <q-avatar
+              rounded
+              color="primary"
+              text-color="white"
+              size="20px"
+              icon="drag_handle"
+              style="width: 32px; height: 14px"
+            />
           </template>
 
           <template #after>

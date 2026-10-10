@@ -1,6 +1,6 @@
 <template>
   <div class="column no-wrap relative-position">
-    <q-toolbar class="q-px-xs" style="min-height: 0">
+    <q-toolbar class="q-px-xs q-py-sm" style="min-height: 0">
       <q-btn
         flat
         dense
@@ -33,6 +33,7 @@
         @click="exportPng"
       />
     </q-toolbar>
+    <q-separator />
     <div ref="container" class="col plot-container flex flex-center q-pa-xs" />
     <div v-if="!webr.plots.length" class="absolute-center text-help">No plots yet</div>
   </div>

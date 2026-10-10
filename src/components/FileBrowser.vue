@@ -1,6 +1,6 @@
 <template>
   <div class="column no-wrap">
-    <q-toolbar class="q-px-xs" style="min-height: 0">
+    <q-toolbar class="q-px-xs q-py-sm" style="min-height: 0">
       <q-btn flat dense size="sm" icon="note_add" title="New file" @click="create(false)" />
       <q-btn
         flat
@@ -33,6 +33,7 @@
       <q-btn flat dense size="sm" icon="refresh" title="Refresh" @click="refresh" />
       <input ref="uploader" type="file" multiple hidden @change="upload" />
     </q-toolbar>
+    <q-separator />
     <q-tree
       v-model:selected="selected"
       v-model:expanded="expanded"
