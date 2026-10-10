@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh lpR fFf">
+  <q-layout view="lHh lpR fFf">
     <q-header elevated class="bg-dark text-white">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="drawer = !drawer" />
@@ -29,7 +29,14 @@
     <q-drawer v-model="drawer" show-if-above bordered>
       <q-list>
         <q-item-label header>Links</q-item-label>
-        <q-item v-for="link in links" :key="link.link" clickable tag="a" target="_blank" :href="link.link">
+        <q-item
+          v-for="link in links"
+          :key="link.link"
+          clickable
+          tag="a"
+          target="_blank"
+          :href="link.link"
+        >
           <q-item-section avatar>
             <q-icon :name="link.icon" />
           </q-item-section>
@@ -68,7 +75,19 @@ const links = [
     link: 'https://wiki.datashield.org',
   },
   {
-    title: 'Opal',
+    title: 'DSI',
+    caption: 'DataSHIELD Interface R package',
+    icon: 'hub',
+    link: 'https://datashield.github.io/DSI',
+  },
+  {
+    title: 'dsBaseClient',
+    caption: 'DataSHIELD analysis functions R package',
+    icon: 'functions',
+    link: 'https://datashield.github.io/dsBaseClient/',
+  },
+  {
+    title: 'OBiBa/Opal',
     caption: 'DataSHIELD server documentation',
     icon: 'storage',
     link: 'https://opaldoc.obiba.org',
