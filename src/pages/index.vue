@@ -44,6 +44,7 @@
     <q-page-container>
       <router-view />
     </q-page-container>
+    <welcome-dialog />
   </q-layout>
 </template>
 
@@ -51,6 +52,7 @@
 import { ref } from 'vue';
 import { useQuasar } from 'quasar';
 import { useWebRStore } from '@/stores/webr';
+import WelcomeDialog from '@/components/WelcomeDialog.vue';
 
 const $q = useQuasar();
 const webr = useWebRStore();
