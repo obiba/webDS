@@ -61,6 +61,8 @@ interface TreeNode {
 }
 
 const HOME = '/home/web_user';
+// webR runtime artifacts, not user files
+const HIDDEN = ['default.profraw'];
 
 const emit = defineEmits<{ open: [path: string] }>();
 
@@ -94,6 +96,7 @@ watch(
 function toTree(node: FSNode, path: string): TreeNode {
   const children = node.isFolder
     ? Object.values(node.contents ?? {})
+        .filter((child) => !HIDDEN.includes(child.name))
         .map((child) => toTree(child, `${path}/${child.name}`))
         .sort((a, b) => Number(b.isFolder) - Number(a.isFolder) || a.label.localeCompare(b.label))
     : undefined;

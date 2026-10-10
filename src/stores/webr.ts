@@ -2,6 +2,10 @@ import { defineStore, acceptHMRUpdate } from 'pinia';
 import { markRaw, ref } from 'vue';
 import { WebR, type CanvasMessage, type PagerMessage } from 'webr';
 import initR from './init.R?raw';
+import exampleR from './datashield_analysis.R?raw';
+
+/** Example script written in the home folder at startup. */
+export const EXAMPLE_FILE = '/home/web_user/datashield_analysis.R';
 
 export interface HelpPage {
   title: string;
@@ -58,6 +62,7 @@ export const useWebRStore = defineStore('webr', () => {
       webR = new WebR();
       await webR.init();
       await webR.evalRVoid(initR);
+      await webR.FS.writeFile(EXAMPLE_FILE, new TextEncoder().encode(exampleR));
       status.value = 'ready';
       void readLoop(webR);
     } catch (e) {

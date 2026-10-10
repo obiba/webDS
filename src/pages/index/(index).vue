@@ -43,7 +43,7 @@ import EditorPanel from '@/components/EditorPanel.vue';
 import FileBrowser from '@/components/FileBrowser.vue';
 import HelpViewer from '@/components/HelpViewer.vue';
 import PlotViewer from '@/components/PlotViewer.vue';
-import { useWebRStore } from '@/stores/webr';
+import { EXAMPLE_FILE, useWebRStore } from '@/stores/webr';
 
 const webr = useWebRStore();
 const editor = useTemplateRef('editor');
@@ -61,7 +61,10 @@ watch(
   () => (tab.value = 'help'),
 );
 
-onMounted(() => void webr.init());
+onMounted(async () => {
+  await webr.init();
+  if (webr.status === 'ready') void editor.value?.open(EXAMPLE_FILE);
+});
 
 /** Ref remembered in this browser; storage may be unavailable (private mode...). */
 function stored<T>(key: string, initial: T): Ref<T> {
