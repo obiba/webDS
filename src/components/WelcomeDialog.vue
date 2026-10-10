@@ -4,11 +4,16 @@
       <q-card-section class="text-h6">What is DataSHIELD?</q-card-section>
       <q-card-section class="q-pt-none">
         <p>
-          DataSHIELD lets you analyse sensitive data held by several organisations
-          <b>without the data ever leaving them</b>. From R, you send analysis commands to each data
-          server. Each server runs them on its own data and sends back only aggregated,
-          non-disclosive results (counts, means, model coefficients...), which are then combined
-          across servers.
+          DataSHIELD is a <b>privacy-preserving federated analysis</b> platform: it lets you analyse
+          sensitive data held by several organisations
+          <b>without the individual-level data ever leaving them</b>. From R, you send analysis
+          commands to each data server. Each server runs them on its own data and sends back only
+          aggregated, non-disclosive results (counts, means, model coefficients...), which are then
+          combined across servers.
+        </p>
+        <p>
+          Individual-level data are never seen by the analyst: built-in disclosure controls (minimum
+          cell counts, blocked functions, etc.) stop any result that could identify a person.
         </p>
         <svg
           viewBox="0 0 480 220"
@@ -78,7 +83,11 @@
         </svg>
         <p class="q-mt-md q-mb-none">
           This playground runs the R client in your browser: the example script in the editor runs
-          against the demo servers.
+          against the
+          <a href="https://opal-demo.obiba.org" target="_blank" rel="noopener noreferrer"
+            >OBiBa/Opal</a
+          >
+          demo servers.
         </p>
       </q-card-section>
       <q-card-actions align="right">
@@ -87,7 +96,7 @@
           no-caps
           color="primary"
           label="Learn more"
-          href="https://wiki.datashield.org"
+          href="https://datashield.org"
           target="_blank"
         />
         <q-btn flat no-caps color="primary" label="Get started" v-close-popup />

@@ -68,6 +68,12 @@ const links = [
     link: 'https://wiki.datashield.org',
   },
   {
+    title: 'Opal',
+    caption: 'DataSHIELD server documentation',
+    icon: 'storage',
+    link: 'https://opaldoc.obiba.org',
+  },
+  {
     title: 'webR',
     caption: 'R in the browser',
     icon: 'menu_book',
