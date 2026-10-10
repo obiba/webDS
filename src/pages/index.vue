@@ -87,6 +87,12 @@ const links = [
     link: 'https://datashield.github.io/dsBaseClient/',
   },
   {
+    title: 'dsTidyverseClient',
+    caption: 'DataSHIELD tidyverse R package',
+    icon: 'table_view',
+    link: 'https://molgenis.github.io/ds-tidyverse-client/',
+  },
+  {
     title: 'OBiBa/Opal',
     caption: 'DataSHIELD server documentation',
     icon: 'storage',

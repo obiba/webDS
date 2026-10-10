@@ -4,6 +4,8 @@ import { WebR, type CanvasMessage, type PagerMessage } from 'webr';
 import initR from './init.R?raw';
 import exampleR from './datashield_analysis.R?raw';
 import exampleDSLiteR from './datashield_analysis_dslite.R?raw';
+import exampleTidyverseR from './datashield_tidyverse.R?raw';
+import exampleTidyverseDSLiteR from './datashield_tidyverse_dslite.R?raw';
 
 /** Example script written in the home folder at startup. */
 export const EXAMPLE_FILE = '/home/web_user/datashield_analysis.R';
@@ -65,6 +67,8 @@ export const useWebRStore = defineStore('webr', () => {
       await webR.evalRVoid(initR);
       await webR.FS.writeFile(EXAMPLE_FILE, new TextEncoder().encode(exampleR));
       await webR.FS.writeFile('/home/web_user/datashield_analysis_dslite.R', new TextEncoder().encode(exampleDSLiteR));
+      await webR.FS.writeFile('/home/web_user/datashield_tidyverse.R', new TextEncoder().encode(exampleTidyverseR));
+      await webR.FS.writeFile('/home/web_user/datashield_tidyverse_dslite.R', new TextEncoder().encode(exampleTidyverseDSLiteR));
       status.value = 'ready';
       void readLoop(webR);
     } catch (e) {

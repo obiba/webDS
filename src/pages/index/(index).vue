@@ -3,7 +3,7 @@
     <q-splitter
       v-model="split"
       class="fit"
-      separator-class="bg-primary"
+      separator-class="bg-grey-4"
       separator-style="width: 3px"
     >
       <template #before>
@@ -11,7 +11,7 @@
           v-model="editorSplit"
           horizontal
           class="fit"
-          separator-class="bg-primary"
+          separator-class="bg-grey-4"
           separator-style="height: 3px"
         >
           <template #before>
