@@ -1,9 +1,12 @@
 <template>
   <q-layout view="lHh lpR fFf">
-    <q-header elevated class="bg-dark text-white">
+    <q-header class="bg-dark text-white">
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="drawer = !drawer" />
-        <q-toolbar-title>Web R/DataSHIELD</q-toolbar-title>
+        <q-toolbar-title class="row items-center no-wrap brand-title">
+          <img :src="datashieldMark" alt="" class="brand-mark q-mr-sm" />
+          Web R/DataSHIELD
+        </q-toolbar-title>
         <q-btn
           v-if="$q.screen.lt.md"
           flat
@@ -59,6 +62,7 @@
 import { provide, ref } from 'vue';
 import { useQuasar } from 'quasar';
 import WelcomeDialog from '@/components/WelcomeDialog.vue';
+import datashieldMark from '@/assets/datashield-mark-negative.svg';
 
 const $q = useQuasar();
 // shown at each visit: it is a warning
