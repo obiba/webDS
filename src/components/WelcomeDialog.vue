@@ -67,7 +67,7 @@
               height="55"
               rx="6"
               fill="none"
-              stroke="#007bff"
+              stroke="#5a45b0"
               stroke-width="1.5"
             />
             <text x="340" :y="y + 24" font-weight="bold" fill="currentColor">
@@ -75,7 +75,7 @@
             </text>
             <text x="340" :y="y + 42" font-size="12" fill="currentColor">Opal + dsBase</text>
             <!-- data cylinder -->
-            <g fill="#007bff" fill-opacity="0.25" stroke="#007bff">
+            <g fill="#5a45b0" fill-opacity="0.25" stroke="#5a45b0">
               <path :d="`M435 ${y + 15} v24 a12 5 0 0 0 24 0 v-24`" />
               <ellipse cx="447" :cy="y + 15" rx="12" ry="5" />
             </g>

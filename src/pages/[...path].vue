@@ -11,7 +11,7 @@
         text-color="dark"
         unelevated
         to="/"
-        label="Go Home"
+        label="Go home"
         no-caps
       />
     </div>

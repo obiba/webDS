@@ -14,7 +14,11 @@ export default defineConfig((ctx) => {
     boot: ['i18n'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
-    css: ['app.scss'],
+    css: [
+      'app.scss',
+      '~@fontsource-variable/sora/index.css',
+      '~@fontsource-variable/instrument-sans/index.css',
+    ],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -25,7 +29,6 @@ export default defineConfig((ctx) => {
       // 'themify',
       // 'line-awesome',
 
-      'roboto-font', // optional, you are not bound to it
       'material-icons', // optional, you are not bound to it
     ],
 

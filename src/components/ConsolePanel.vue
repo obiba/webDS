@@ -141,17 +141,17 @@ function interrupt(e: KeyboardEvent) {
   padding: 0;
 }
 .console-input {
-  color: #1565c0;
+  color: #5a45b0;
   white-space: pre;
 }
 .console-pending {
-  color: #9e9e9e;
+  color: #4f6663;
 }
 /* same width as the "> " prompt */
 .console-spinner {
   margin-right: 1ch;
 }
 .console-stderr {
-  color: #c62828;
+  color: #b42318;
 }
 </style>

@@ -5,7 +5,7 @@
       :model-value="small ? 100 : split"
       class="fit"
       :disable="small"
-      :separator-class="small ? 'hidden' : 'bg-grey-4'"
+      :separator-class="small ? 'hidden' : 'bg-separator'"
       separator-style="width: 3px"
       @update:model-value="split = $event"
     >
@@ -14,7 +14,7 @@
           v-model="editorSplit"
           horizontal
           class="fit"
-          separator-class="bg-grey-4"
+          separator-class="bg-separator"
           separator-style="height: 3px"
         >
           <template #before>
